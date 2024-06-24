@@ -85,7 +85,7 @@ const askQuestions = () => {
 
     document.getElementById('questions').innerHTML = questions.map((q, index) => {
         if (q.type === 'radio') {
-            return `<div class="col-md-6">
+            return `<div class="col-md-4">
                 <div class="form-group">
                     <p>${q.question}</p>
                     ${q.options.map(option => `<div class="form-check">
@@ -95,7 +95,7 @@ const askQuestions = () => {
                 </div>
             </div>`;
         } else if (q.type === 'checkbox') {
-            return `<div class="col-md-6">
+            return `<div class="col-md-4">
                 <div class="form-group">
                     <p>${q.question}</p>
                     ${q.options.map(option => `<div class="form-check">
