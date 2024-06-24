@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Speech Transcription</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        #transcript {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .form-check-label {
+            margin-left: 5px;
+        }
+        .form-control-textarea {
+            height: 150px;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <div class="container mt-5">
+        <h1 class="mb-4">Real-Time Speech Transcription</h1>
+        <div class="mb-3">
+            <button class="btn btn-primary" id="start-btn">Start Recording</button>
+            <button class="btn btn-danger" id="stop-btn">Stop Recording</button>
+        </div>
+        <p id="status" class="font-weight-bold">Press "Start Recording" to begin.</p>
+        <pre id="transcript" class="p-3 bg-white border rounded"></pre>
+        <div id="audio-playback" class="mt-4"></div>
+        <h2 class="mt-4">Questions</h2>
+        <div id="questions" class="row bg-white p-3 border rounded"></div>
+    </div>
+    <script src="/dist/bundle.js"></script>
+</body>
+</html>
