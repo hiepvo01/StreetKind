@@ -85,7 +85,7 @@ const askQuestions = () => {
 
     document.getElementById('questions').innerHTML = questions.map((q, index) => {
         if (q.type === 'radio') {
-            return `<div class="col-md-4">
+            return `<div class="col-md-6">
                 <div class="form-group">
                     <p>${q.question}</p>
                     ${q.options.map(option => `<div class="form-check">
@@ -95,7 +95,7 @@ const askQuestions = () => {
                 </div>
             </div>`;
         } else if (q.type === 'checkbox') {
-            return `<div class="col-md-4">
+            return `<div class="col-md-6">
                 <div class="form-group">
                     <p>${q.question}</p>
                     ${q.options.map(option => `<div class="form-check">
@@ -123,6 +123,7 @@ const askQuestions = () => {
         body: JSON.stringify({ questions })
     })
     .then(response => {
+        console.log('askQuestions API response status:', response.status);
         if (!response.ok) {
             throw new Error('Network response was not ok');
         }
@@ -157,5 +158,52 @@ const askQuestions = () => {
     });
 };
 
+const reviewAndSubmit = () => {
+    console.log("Review and Submit button clicked");
+
+    // Collect the answers
+    const answers = {};
+    document.querySelectorAll('#questions .form-group').forEach((group, index) => {
+        const question = group.querySelector('p').innerText;
+        let answer = '';
+
+        if (group.querySelector('input[type="radio"]:checked')) {
+            answer = group.querySelector('input[type="radio"]:checked').value;
+        } else if (group.querySelector('textarea')) {
+            answer = group.querySelector('textarea').value;
+        } else {
+            const selectedOptions = [];
+            group.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
+                selectedOptions.push(checkbox.value);
+            });
+            answer = selectedOptions.join(', ');
+        }
+
+        answers[question] = answer;
+    });
+
+    console.log("Collected answers:", answers);
+
+    // Send the answers to the backend to save in an Excel file
+    fetch('/save_answers', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ answers })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            console.log("Answers saved successfully");
+            window.location.href = '/view_reports'; // Redirect to the view reports page
+        } else {
+            console.error("Error saving answers:", data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error in reviewAndSubmit fetch:', error);
+    });
+};
+
 document.getElementById('start-btn').addEventListener('click', startRecording);
 document.getElementById('stop-btn').addEventListener('click', stopRecording);
+document.getElementById('review-submit-btn').addEventListener('click', reviewAndSubmit);

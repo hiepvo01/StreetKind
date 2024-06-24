@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Reports</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <div class="container mt-5">
+        <h1 class="mb-4">View and Edit Reports</h1>
+        <div id="reports" class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Index</th>
+                        {% for key in reports[0].keys() %}
+                            <th>{{ key }}</th>
+                        {% endfor %}
+                        <th>Edit</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for report in reports %}
+                    <tr>
+                        <td>{{ loop.index0 }}</td>
+                        {% for key, value in report.items() %}
+                            <td contenteditable="true">{{ value }}</td>
+                        {% endfor %}
+                        <td><button class="btn btn-primary save-btn" data-index="{{ loop.index0 }}">Save</button></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script>
+        document.querySelectorAll('.save-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const index = this.getAttribute('data-index');
+                const row = this.closest('tr');
+                const report = { index };
+
+                row.querySelectorAll('td[contenteditable="true"]').forEach((cell, idx) => {
+                    const key = document.querySelector(`th:nth-child(${idx + 2})`).innerText;
+                    report[key] = cell.innerText;
+                });
+
+                fetch('/update_report', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ report })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        console.log("Report updated successfully");
+                    } else {
+                        console.error("Error updating report:", data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error in update_report fetch:', error);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

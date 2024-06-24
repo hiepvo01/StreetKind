@@ -4,6 +4,7 @@ import speech_recognition as sr
 from openai import OpenAI
 from dotenv import load_dotenv
 import io
+import pandas as pd
 
 load_dotenv()  # take environment variables from .env.
 
@@ -11,6 +12,7 @@ app = Flask(__name__, static_folder='dist', template_folder='src')
 
 recognizer = sr.Recognizer()
 transcript = []
+data_file = 'data.xlsx'
 
 # Set your OpenAI API key
 openai_api_key = os.getenv('OPENAI_API_KEY')
@@ -73,6 +75,40 @@ def ask_questions():
         answers.append({"question": question['question'], "answer": answer})
 
     return jsonify({"answers": answers})
+
+@app.route('/save_answers', methods=['POST'])
+def save_answers():
+    answers = request.json.get('answers', [])
+    df = pd.DataFrame([answers])
+
+    if os.path.exists(data_file):
+        existing_df = pd.read_excel(data_file)
+        df = pd.concat([existing_df, df], ignore_index=True)
+    df.to_excel(data_file, index=False)
+    return jsonify({"success": True})
+
+@app.route('/view_reports')
+def view_reports():
+    if os.path.exists(data_file):
+        df = pd.read_excel(data_file)
+        reports = df.to_dict(orient='records')
+    else:
+        reports = []
+    return render_template('view_reports.html', reports=reports)
+
+@app.route('/update_report', methods=['POST'])
+def update_report():
+    updated_report = request.json.get('report', {})
+    index = int(updated_report.pop('index'))
+
+    if os.path.exists(data_file):
+        df = pd.read_excel(data_file)
+        for key, value in updated_report.items():
+            df.at[index, key] = value
+        df.to_excel(data_file, index=False)
+        return jsonify({"success": True})
+    else:
+        return jsonify({"error": "Data file not found"}), 404
 
 if __name__ == '__main__':
     app.run(debug=True)
