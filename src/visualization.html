@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Visualizations</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .chart-container {
+            position: relative;
+            margin: auto;
+            height: 50vh;
+            width: 100%;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <div class="container mt-5">
+        <h1 class="mb-4">Data Visualizations</h1>
+        <div class="mb-3">
+            <a href="/" class="btn btn-secondary">Back to Main Page</a>
+            <a href="/view_reports" class="btn btn-primary">View Reports</a>
+        </div>
+        <div class="row">
+            <div class="col-md-6 chart-container">
+                <canvas id="genderChart"></canvas>
+            </div>
+            <div class="col-md-6 chart-container">
+                <canvas id="ageGroupChart"></canvas>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 chart-container">
+                <canvas id="aloneChart"></canvas>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('/data')
+                .then(response => response.json())
+                .then(data => {
+                    const genderCounts = data.gender;
+                    const ageGroupCounts = data.age_group;
+                    const aloneCounts = data.alone;
+
+                    const genderCtx = document.getElementById('genderChart').getContext('2d');
+                    new Chart(genderCtx, {
+                        type: 'bar',
+                        data: {
+                            labels: Object.keys(genderCounts),
+                            datasets: [{
+                                label: 'Count',
+                                data: Object.values(genderCounts),
+                                backgroundColor: [
+                                    'rgba(255, 99, 132, 0.2)', 
+                                    'rgba(54, 162, 235, 0.2)', 
+                                    'rgba(75, 192, 192, 0.2)'
+                                ],
+                                borderColor: [
+                                    'rgba(255, 99, 132, 1)', 
+                                    'rgba(54, 162, 235, 1)', 
+                                    'rgba(75, 192, 192, 1)'
+                                ],
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            },
+                            plugins: {
+                                legend: {
+                                    display: false
+                                },
+                                title: {
+                                    display: true,
+                                    text: 'Gender Distribution'
+                                }
+                            }
+                        }
+                    });
+
+                    const ageGroupCtx = document.getElementById('ageGroupChart').getContext('2d');
+                    new Chart(ageGroupCtx, {
+                        type: 'bar',
+                        data: {
+                            labels: Object.keys(ageGroupCounts),
+                            datasets: [{
+                                label: 'Count',
+                                data: Object.values(ageGroupCounts),
+                                backgroundColor: [
+                                    'rgba(153, 102, 255, 0.2)', 
+                                    'rgba(255, 159, 64, 0.2)', 
+                                    'rgba(255, 205, 86, 0.2)'
+                                ],
+                                borderColor: [
+                                    'rgba(153, 102, 255, 1)', 
+                                    'rgba(255, 159, 64, 1)', 
+                                    'rgba(255, 205, 86, 1)'
+                                ],
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            },
+                            plugins: {
+                                legend: {
+                                    display: false
+                                },
+                                title: {
+                                    display: true,
+                                    text: 'Age Group Distribution'
+                                }
+                            }
+                        }
+                    });
+
+                    const aloneCtx = document.getElementById('aloneChart').getContext('2d');
+                    new Chart(aloneCtx, {
+                        type: 'bar',
+                        data: {
+                            labels: Object.keys(aloneCounts),
+                            datasets: [{
+                                label: 'Count',
+                                data: Object.values(aloneCounts),
+                                backgroundColor: [
+                                    'rgba(75, 192, 192, 0.2)', 
+                                    'rgba(255, 159, 64, 0.2)'
+                                ],
+                                borderColor: [
+                                    'rgba(75, 192, 192, 1)', 
+                                    'rgba(255, 159, 64, 1)'
+                                ],
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            },
+                            plugins: {
+                                legend: {
+                                    display: false
+                                },
+                                title: {
+                                    display: true,
+                                    text: 'Alone Distribution'
+                                }
+                            }
+                        }
+                    });
+                })
+                .catch(error => console.error('Error fetching data:', error));
+        });
+    </script>
+</body>
+</html>

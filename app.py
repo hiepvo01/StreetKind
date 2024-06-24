@@ -109,6 +109,27 @@ def update_report():
         return jsonify({"success": True})
     else:
         return jsonify({"error": "Data file not found"}), 404
+    
+@app.route('/visualization')
+def visualization():
+    return render_template('visualization.html')
+
+@app.route('/data')
+def get_data():
+    if os.path.exists(data_file):
+        df = pd.read_excel(data_file)
+        gender_counts = df['Gender'].value_counts().to_dict()
+        age_group_counts = df['Age Group'].value_counts().to_dict()
+        alone_counts = df['Alone'].value_counts().to_dict()
+
+        data = {
+            "gender": gender_counts,
+            "age_group": age_group_counts,
+            "alone": alone_counts
+        }
+        return jsonify(data)
+    else:
+        return jsonify({"error": "Data file not found"}), 404
 
 if __name__ == '__main__':
     app.run(debug=True)
