@@ -4,9 +4,9 @@ This project aims to create an Automated Report Data generation using Speech to 
 ## Project Setup
 Create OpenAI account and create file .env with variable OPENAI_API_KEY
 
-pip install -r requirements.txt
-npm install recorder-js --save 
-npm install webpack webpack-cli --save-dev 
-npm install --save-dev babel-loader @babel/core @babel/preset-env
-npm run build
-flask run
+- pip install -r requirements.txt
+- npm install recorder-js --save 
+- npm install webpack webpack-cli --save-dev 
+- npm install --save-dev babel-loader @babel/core @babel/preset-env
+- npm run build
+- flask run
